@@ -1,0 +1,14 @@
+.git/
+**/.gitignore
+
+Dockerfile
+.dockeringore
+compose.yaml
+
+.venv/
+**/__pycache__/
+
+.env.example
+
+migrations/versions/*
+certificates/versions/*

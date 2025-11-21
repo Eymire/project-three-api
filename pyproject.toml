@@ -1,0 +1,24 @@
+[project]
+name = "project-three-api"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.17.2",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.121.3",
+    "orjson>=3.11.4",
+    "pydantic[email]>=2.12.4",
+    "sqlalchemy[asyncio]>=2.0.44",
+    "uvicorn[standard]>=0.38.0",
+]
+
+[tool.ruff]
+line-length = 100
+lint.select = ["ANN", "B", "A", "ICN", "LOG", "PIE", "SIM", "ARG", "I", "N", "E", "W", "F", "UP", "C4"]
+lint.ignore = ["B008", "ANN201"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "single"
