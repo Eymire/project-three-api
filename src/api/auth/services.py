@@ -45,7 +45,7 @@ async def sign_up(
 
     return {
         'access_token': create_access_token(result),
-        'refresh_token': create_refresh_token(result),
+        'refresh_token': await create_refresh_token(result, session),
     }
 
 
@@ -65,14 +65,15 @@ async def sign_in(
 
     return {
         'access_token': create_access_token(result.id),
-        'refresh_token': create_refresh_token(result.id),
+        'refresh_token': await create_refresh_token(result.id, session),
     }
 
 
 async def refresh(
+    session: AsyncSession,
     user_id: int,
 ) -> dict:
     return {
         'access_token': create_access_token(user_id),
-        'refresh_token': create_refresh_token(user_id),
+        'refresh_token': await create_refresh_token(user_id, session),
     }

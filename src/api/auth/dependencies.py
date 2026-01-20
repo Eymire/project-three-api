@@ -1,3 +1,4 @@
+import hashlib
 from collections.abc import Callable, Coroutine
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any, Literal, TypedDict
@@ -6,10 +7,11 @@ import jwt
 from argon2 import PasswordHasher
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
+from src.models import RefreshToken as RefreshTokenModel
 from src.models import User as UserModel
 from src.settings import jwt_settings
 
@@ -53,16 +55,31 @@ def create_access_token(user_id: int) -> str:
     )
 
 
-def create_refresh_token(user_id: int) -> str:
+async def create_refresh_token(
+    user_id: int,
+    session: AsyncSession,
+) -> str:
+    from sqlalchemy import insert
+
     payload = {
         'user_id': user_id,
     }
 
-    return create_jwt(
+    token = create_jwt(
         'refresh',
         payload,
         timedelta(minutes=jwt_settings.refresh_token_lifetime_minutes),
     )
+
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    stmt = insert(RefreshTokenModel).values(
+        user_id=user_id,
+        token_hash=token_hash,
+    )
+    await session.execute(stmt)
+    await session.commit()
+
+    return token
 
 
 def create_jwt(
@@ -142,6 +159,22 @@ def get_current_user_wrapper(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail='Invalid token type.',
             )
+
+        if token_type == 'refresh':
+            token_hash = hashlib.sha256(credentials.credentials.encode()).hexdigest()
+            stmt = select(RefreshTokenModel).where(RefreshTokenModel.token_hash == token_hash)
+            result = await session.execute(stmt)
+            token_record = result.scalar_one_or_none()
+
+            if not token_record:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail='Invalid token.',
+                )
+
+            stmt = delete(RefreshTokenModel).where(RefreshTokenModel.token_hash == token_hash)
+            await session.execute(stmt)
+            await session.commit()
 
         if jwt_payload['expires_at'] < int(datetime.now(UTC).timestamp()):
             raise HTTPException(

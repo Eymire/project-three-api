@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.security import HTTPBearer
 
 from src.dependencies import current_user_access_dep, current_user_refresh_dep, session_dep
 
@@ -38,11 +39,18 @@ async def sign_in(
     return result  # type: ignore[return-value]
 
 
+security = HTTPBearer()
+
+
 @router.post('/refresh')
 async def refresh(
     current_user: current_user_refresh_dep,
+    session: session_dep,
 ) -> TokenSchema:
-    result = await services.refresh(current_user.id)
+    result = await services.refresh(
+        session,
+        current_user.id,
+    )
 
     return result  # type: ignore[return-value]
 
