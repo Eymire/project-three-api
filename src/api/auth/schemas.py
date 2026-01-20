@@ -3,24 +3,24 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 
 
-class SignInSchema(BaseModel):
+class SignIn(BaseModel):
     name: str = Field(min_length=4, max_length=32)
     password: str = Field(min_length=8)
 
 
-class SignUpSchema(BaseModel):
+class SignUp(BaseModel):
     name: str = Field(min_length=4, max_length=32)
     email: EmailStr
     password: str = Field(min_length=8)
 
 
-class TokenSchema(BaseModel):
+class Token(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = 'Bearer'
 
 
-class UserProfileSchema(BaseModel):
+class UserProfile(BaseModel):
     id: int
     name: str
     email: EmailStr

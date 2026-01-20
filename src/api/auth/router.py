@@ -1,9 +1,12 @@
 from fastapi import APIRouter
 
-from src.dependencies import current_user_access_dep, session_dep
+from src.dependencies import current_user_access_dep, current_user_refresh_dep, session_dep
 
 from . import services
-from .schemas import SignInSchema, SignUpSchema, TokenSchema, UserProfileSchema
+from .schemas import SignIn as SignInSchema
+from .schemas import SignUp as SignUpSchema
+from .schemas import Token as TokenSchema
+from .schemas import UserProfile as UserProfileSchema
 
 
 router = APIRouter()
@@ -31,6 +34,15 @@ async def sign_in(
         session,
         data,
     )
+
+    return result  # type: ignore[return-value]
+
+
+@router.post('/refresh')
+async def refresh(
+    current_user: current_user_refresh_dep,
+) -> TokenSchema:
+    result = await services.refresh(current_user.id)
 
     return result  # type: ignore[return-value]
 

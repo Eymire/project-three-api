@@ -103,16 +103,26 @@ def decode_jwt(token: str) -> JWTPayload | None:
     return data
 
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
-def get_current_user_from_token_type(
+def get_current_user_wrapper(
     token_type: str,
-) -> Callable[..., Coroutine[Any, Any, UserModel]]:
+    required: bool,
+) -> Callable[..., Coroutine[Any, Any, UserModel | None]]:
     async def get_current_user(
         session: Annotated[AsyncSession, Depends(get_session)],
-        credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
-    ) -> UserModel:
+        credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
+    ) -> UserModel | None:
+        if not credentials:
+            if required:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail='Not authenticated.',
+                )
+
+            return None
+
         if credentials.scheme != 'Bearer':
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

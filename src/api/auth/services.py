@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.models import User as UserModel
 
 from .dependencies import create_access_token, create_refresh_token, hash_password, verify_password
-from .schemas import SignInSchema, SignUpSchema
+from .schemas import SignIn as SignInSchema
+from .schemas import SignUp as SignUpSchema
 
 
 async def sign_up(
@@ -56,7 +57,7 @@ async def sign_in(
     result = await session.execute(stmt)
     result = result.scalar_one_or_none()
 
-    if not result or verify_password(data.password, result.password_hash):
+    if not result or not verify_password(data.password, result.password_hash):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='User not found.',
@@ -65,4 +66,13 @@ async def sign_in(
     return {
         'access_token': create_access_token(result.id),
         'refresh_token': create_refresh_token(result.id),
+    }
+
+
+async def refresh(
+    user_id: int,
+) -> dict:
+    return {
+        'access_token': create_access_token(user_id),
+        'refresh_token': create_refresh_token(user_id),
     }
