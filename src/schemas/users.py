@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
-from src.enums import FileVisibility, UserScope, UserSubscribePlan
+from src.enums import UserScope, UserSubscribePlan
 
 
 class User(BaseModel):
@@ -16,12 +16,10 @@ class User(BaseModel):
     created_at: datetime
 
 
-class File(BaseModel):
+class UserProfile(BaseModel):
     id: int
-    user_id: int
     name: str
-    stored_name: str
-    size: int
-    content_type: str
-    visibility: FileVisibility
+    subscribe_plan: UserSubscribePlan
+    email: EmailStr
+    used_storage: int
     created_at: datetime

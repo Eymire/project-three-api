@@ -45,7 +45,7 @@ class File(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     name: Mapped[str]
-    stored_name: Mapped[str]
+    stored_name: Mapped[str] = mapped_column(unique=True)
     size: Mapped[int]
     content_type: Mapped[str]
     visibility: Mapped[FileVisibility] = mapped_column(default=FileVisibility.PRIVATE)

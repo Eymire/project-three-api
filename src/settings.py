@@ -1,4 +1,17 @@
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class AppSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix='APP_',
+        env_file='.env',
+        env_file_encoding='utf-8',
+        extra='ignore',
+    )
+
+    environment: Literal['development', 'production'] = 'development'
 
 
 class DBSettings(BaseSettings):
@@ -27,5 +40,6 @@ class JWTSettings(BaseSettings):
     refresh_token_lifetime_minutes: int
 
 
+app_settings = AppSettings()  # type: ignore[call-arg]
 db_settings = DBSettings()  # type: ignore[call-arg]
 jwt_settings = JWTSettings()  # type: ignore[call-arg]

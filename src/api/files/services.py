@@ -99,15 +99,15 @@ async def update_file(
 ):
     stmt = select(FileModel).where(FileModel.id == file_id)
     result = await session.execute(stmt)
-    file = result.scalar_one_or_none()
+    result = result.scalar_one_or_none()
 
-    if not file:
+    if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='File not found.',
         )
 
-    if file.user_id != user_id:
+    if result.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='You do not have permission to update this file.',
@@ -130,27 +130,27 @@ async def delete_file(
 ):
     stmt = select(FileModel).where(FileModel.id == file_id)
     result = await session.execute(stmt)
-    file = result.scalar_one_or_none()
+    result = result.scalar_one_or_none()
 
-    if not file:
+    if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='File not found.',
         )
 
-    if file.user_id != user_id:
+    if result.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='You do not have permission to delete this file.',
         )
 
-    storage_path = Path('storage') / file.stored_name
+    storage_path = Path('storage') / result.stored_name
     storage_path.unlink(missing_ok=True)
 
     stmt = (
         update(UserModel)
         .where(UserModel.id == user_id)
-        .values(used_storage=UserModel.used_storage - file.size)
+        .values(used_storage=UserModel.used_storage - result.size)
     )
     await session.execute(stmt)
 

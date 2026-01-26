@@ -3,10 +3,10 @@ from sqlalchemy import insert, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import User as UserModel
+from src.schemas.auth import SignIn as SignInSchema
+from src.schemas.auth import SignUp as SignUpSchema
 
 from .dependencies import create_access_token, create_refresh_token, hash_password, verify_password
-from .schemas import SignIn as SignInSchema
-from .schemas import SignUp as SignUpSchema
 
 
 async def sign_up(

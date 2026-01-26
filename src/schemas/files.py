@@ -5,6 +5,17 @@ from pydantic import BaseModel
 from src.enums import FileVisibility
 
 
+class File(BaseModel):
+    id: int
+    user_id: int
+    name: str
+    stored_name: str
+    size: int
+    content_type: str
+    visibility: FileVisibility
+    created_at: datetime
+
+
 class FileOut(BaseModel):
     id: int
     user_id: int
