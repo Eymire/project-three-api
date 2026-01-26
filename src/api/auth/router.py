@@ -2,12 +2,12 @@ from fastapi import APIRouter
 from fastapi.security import HTTPBearer
 
 from src.dependencies import current_user_access_dep, current_user_refresh_dep, session_dep
+from src.schemas.auth import SignIn as SignInSchema
+from src.schemas.auth import SignUp as SignUpSchema
+from src.schemas.auth import Token as TokenSchema
+from src.schemas.users import UserProfile as UserProfileSchema
 
 from . import services
-from .schemas import SignIn as SignInSchema
-from .schemas import SignUp as SignUpSchema
-from .schemas import Token as TokenSchema
-from .schemas import UserProfile as UserProfileSchema
 
 
 router = APIRouter()

@@ -2,10 +2,10 @@ from fastapi import APIRouter, Path, UploadFile, status
 from fastapi.responses import FileResponse
 
 from src.dependencies import current_user_access_dep, current_user_access_optional_dep, session_dep
+from src.schemas.files import FileOut as FileOutSchema
+from src.schemas.files import FileUpdate as FileUpdateSchema
 
 from . import services
-from .schemas import FileOut as FileOutSchema
-from .schemas import FileUpdate as FileUpdateSchema
 
 
 router = APIRouter()

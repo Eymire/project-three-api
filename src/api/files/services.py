@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import File as FileModel
 from src.models import User as UserModel
+from src.schemas.files import FileUpdate as FileUpdateSchema
 
-from .schemas import FileUpdate as FileUpdateSchema
 from .utils import subscribe_plan_to_storage_limit
 
 

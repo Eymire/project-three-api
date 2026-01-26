@@ -8,8 +8,6 @@ compose.yaml
 .venv/
 **/__pycache__/
 
-.ruff_cache/
-
 certificates/*
 migrations/versions/*
 
